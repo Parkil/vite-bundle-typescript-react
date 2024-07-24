@@ -9,12 +9,15 @@ import {findApiKeyHeader, formatDate} from "../util"
 
 @injectable()
 export class LoadEventDetail {
-  @inject('ManageStorageData') private manageStorageData: ManageStorageData
-  @inject('FindBrowserInfo') private findBrowserInfo: FindBrowserInfo
-  @inject('SendHttpRequest') private sendHttpRequest: SendHttpRequest
-  @inject('ManageConversionInfo') private manageConversionInfo: ManageConversionInfo
+  @inject('ManageStorageData') private manageStorageData!: ManageStorageData
+  @inject('FindBrowserInfo') private findBrowserInfo!: FindBrowserInfo
+  @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
+  @inject('ManageConversionInfo') private manageConversionInfo!: ManageConversionInfo
 
-  async onLoad(): Promise<void> {
+  async onLoad(currentUrl: string) {
+
+    console.log('mount currentUrl', currentUrl)
+
     this.manageStorageData.setBrowserId(window.location.hostname)
     const infoDto: BrowserInfoDto = await this.findBrowserInfo.findInfo()
     const currentDate = new Date()
@@ -31,6 +34,10 @@ export class LoadEventDetail {
         prevUrl: incompleteLogInfo.pageUrl,
         browserId: incompleteLogInfo.browserId,
         domain: window.location.hostname,
+      }
+
+      if (data.prevUrl === data.nextUrl) {
+        console.log(data.prevUrl, '<->', data.nextUrl, '<->', currentUrl)
       }
 
       const apiKeyHeader = findApiKeyHeader()

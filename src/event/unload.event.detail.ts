@@ -9,12 +9,15 @@ import {ScrappingReview} from "../scrapping/scrapping.review"
 
 @injectable()
 export class UnLoadEventDetail {
-  @inject('ManageStorageData') private manageStorageData: ManageStorageData
-  @inject('ChkMeetsConversion') private chkMeetsConversion: ChkMeetsConversion
-  @inject('SendHttpRequest') private sendHttpRequest: SendHttpRequest
-  @inject('ScrappingReview') private scrappingReview: ScrappingReview
+  @inject('ManageStorageData') private manageStorageData!: ManageStorageData
+  @inject('ChkMeetsConversion') private chkMeetsConversion!: ChkMeetsConversion
+  @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
+  @inject('ScrappingReview') private scrappingReview!: ScrappingReview
 
-  onUnLoad() {
+  async onUnLoad(currentUrl: string) {
+
+    console.log('unmount currentUrl', currentUrl)
+
     // window sessionStorage 가 비동기 상황에서 정상적으로 작동하지 않는다
     if (this.manageStorageData.findUnloadEventExecuted() === 'true') {
       return
@@ -24,20 +27,20 @@ export class UnLoadEventDetail {
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
 
-    const data = this.#assemblyData()
+    const data = await this.#assemblyData()
+    console.log('data : ', data)
     const userAgent = this.manageStorageData.findBrowserInfo()['userAgent']
 
     const apiKeyHeader = findApiKeyHeader()
 
-    this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader)
-      .then(() => {})
+    await this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader)
 
-    this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), window.location.href)
+    this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
     this.manageStorageData.setUnloadEventExecuted()
     this.manageStorageData.clearUserData()
   }
 
-  #assemblyData(): object {
+  async #assemblyData(): Promise<object> {
     const browserInfo: Record<string, any> = this.manageStorageData.findBrowserInfo()
     const activityData: PageActivityType = this.manageStorageData.findPageActivity()
     const userData: Record<string, any> = this.manageStorageData.findUserData()
@@ -54,7 +57,7 @@ export class UnLoadEventDetail {
         reviewSelector['list_area_selector'], reviewSelector['row_contents_selector'], document)
     }
 
-    const conversion = this.#assemblyConversion()
+    const conversion = await this.#assemblyConversion()
 
     return {
       browserId: this.manageStorageData.findBrowserId(),
@@ -79,7 +82,7 @@ export class UnLoadEventDetail {
     }
   }
 
-  #assemblyConversion() {
+  async #assemblyConversion(): Promise<object> {
     const userData: Record<string, any> = this.manageStorageData.findUserData()
 
     const registerUser = userData.user

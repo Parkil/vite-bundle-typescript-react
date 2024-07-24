@@ -27,8 +27,8 @@ import {ValidateOptionRecord, ValidateTargetRecord} from "../types/validation.ty
  */
 @injectable()
 export abstract class SaveUserData {
-  private validateErrorMsg: string
-  @inject('ManageStorageData') private manageStorageData: ManageStorageData
+  private validateErrorMsg!: string
+  @inject('ManageStorageData') private manageStorageData!: ManageStorageData
 
   save(param: { [key: string]: any }): boolean {
     if (!this.validateParam(param)) {

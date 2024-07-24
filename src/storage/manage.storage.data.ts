@@ -11,7 +11,7 @@ import {
   RECOBLE_USER_DATA_KEY,
   RECOBLE_API_KEY_KEY, RECOBLE_URL_KEY
 } from "../constants/constants"
-import {BrowserInfoDto} from "../dtos"
+import {BrowserInfoDto, PrevPageInfoDto} from "../dtos"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
 import {PageActivityType} from "../types/page.activity.type"
 import {emptyPageActivityObj, printErrorMsg, decryptAES, encryptAES, formatDate} from "../util"
@@ -49,16 +49,23 @@ export class ManageStorageData {
     return this.#storage.getItem(RECOBLE_CONVERSION_INFO_KEY)
   }
 
-  setIncompleteLogInfo(browserId: string | null) {
+  setIncompleteLogInfo(browserId: string | null, pageUrl: string) {
     if (!browserId) {
       printErrorMsg('브라우저 고유 ID가 생성되지 않았습니다')
     } else {
-      this.#storage.setItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY, browserId)
+      const dto = new PrevPageInfoDto(browserId, pageUrl)
+      return this.#storage.setItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY, JSON.stringify(dto.toJSON()))
     }
   }
 
-  findIncompleteLogInfo(): string | null {
-    return this.#storage.getItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY)
+  findIncompleteLogInfo(): PrevPageInfoDto | null {
+    const jsonStr = this.#storage.getItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY)
+
+    if (!jsonStr) {
+      return null
+    }
+
+    return PrevPageInfoDto.fromJSON(jsonStr)
   }
 
   clearIncompleteLogInfo(): void {
@@ -123,14 +130,16 @@ export class ManageStorageData {
 
     Object.assign(sourceRecord, targetRecord)
 
-    const secret = window.location.host
-    this.#storage.setItem(RECOBLE_USER_DATA_KEY, encryptAES(JSON.stringify(orgRecord), secret))
+    this.#storage.setItem(RECOBLE_USER_DATA_KEY, JSON.stringify(orgRecord))
+    // const secret = window.location.host
+    // this.#storage.setItem(RECOBLE_USER_DATA_KEY, encryptAES(JSON.stringify(orgRecord), secret))
   }
 
   findUserData(): Record<string, any> {
-    const secret = window.location.host
+    // const secret = window.location.host
     const prevData = this.#storage.getItem(RECOBLE_USER_DATA_KEY)
-    return (!prevData) ? {} : JSON.parse(decryptAES(prevData, secret))
+    return (!prevData) ? {} : JSON.parse(prevData)
+    // return (!prevData) ? {} : JSON.parse(decryptAES(prevData, secret))
   }
 
   clearUserData() {

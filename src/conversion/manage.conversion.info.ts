@@ -7,8 +7,8 @@ import {findApiKeyHeader} from "../util";
 
 @injectable()
 export class ManageConversionInfo {
-  @inject('AxiosClient') private httpClient: AxiosClient
-  @inject('ManageStorageData') private manageStorageData: ManageStorageData
+  @inject('AxiosClient') private httpClient!: AxiosClient
+  @inject('ManageStorageData') private manageStorageData!: ManageStorageData
 
   async chkIsConversionInfoUpdated(): Promise<boolean> {
     const apiKeyHeader = findApiKeyHeader()
