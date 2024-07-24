@@ -6,8 +6,8 @@ import {UnLoadEventDetail} from "./unload.event.detail"
 @injectable()
 export class BrowserEvent {
 
-  @inject('LoadEventDetail') private loadEventDetail: LoadEventDetail
-  @inject('UnLoadEventDetail') private unLoadEventDetail: UnLoadEventDetail
+  @inject('LoadEventDetail') private loadEventDetail!: LoadEventDetail
+  @inject('UnLoadEventDetail') private unLoadEventDetail!: UnLoadEventDetail
 
   /*
     주의 할점

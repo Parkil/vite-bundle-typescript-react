@@ -9,9 +9,9 @@ import {
   RECOBLE_INCOMPLETE_LOG_INFO_KEY,
   RECOBLE_UNLOAD_EVENT_EXECUTED_KEY,
   RECOBLE_USER_DATA_KEY,
-  RECOBLE_API_KEY_KEY
+  RECOBLE_API_KEY_KEY, RECOBLE_URL_KEY
 } from "../constants/constants"
-import {BrowserInfoDto, PrevPageInfoDto} from "../dtos"
+import {BrowserInfoDto} from "../dtos"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
 import {PageActivityType} from "../types/page.activity.type"
 import {emptyPageActivityObj, printErrorMsg, decryptAES, encryptAES, formatDate} from "../util"
@@ -20,7 +20,7 @@ import {Storage} from "./storage"
 @injectable()
 export class ManageStorageData {
   #storage: Storage
-  @inject('GenBrowserId') private genBrowserId: GenBrowserId
+  @inject('GenBrowserId') private genBrowserId!: GenBrowserId
   
   constructor() {
     this.#storage = new Storage()
@@ -49,23 +49,16 @@ export class ManageStorageData {
     return this.#storage.getItem(RECOBLE_CONVERSION_INFO_KEY)
   }
 
-  setIncompleteLogInfo(browserId: string | null, pageUrl: string) {
+  setIncompleteLogInfo(browserId: string | null) {
     if (!browserId) {
       printErrorMsg('브라우저 고유 ID가 생성되지 않았습니다')
     } else {
-      const dto = new PrevPageInfoDto(browserId, pageUrl)
-      return this.#storage.setItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY, JSON.stringify(dto.toJSON()))
+      this.#storage.setItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY, browserId)
     }
   }
 
-  findIncompleteLogInfo(): PrevPageInfoDto | null {
-    const jsonStr = this.#storage.getItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY)
-
-    if (!jsonStr) {
-      return null
-    }
-
-    return PrevPageInfoDto.fromJSON(jsonStr)
+  findIncompleteLogInfo(): string | null {
+    return this.#storage.getItem(RECOBLE_INCOMPLETE_LOG_INFO_KEY)
   }
 
   clearIncompleteLogInfo(): void {
@@ -151,5 +144,13 @@ export class ManageStorageData {
 
   findApiKey(): string | null {
     return this.#storage.getItem(RECOBLE_API_KEY_KEY)
+  }
+
+  setUrl(url: string): void {
+    this.#storage.setItem(RECOBLE_URL_KEY, url)
+  }
+
+  findUrl(): string | null {
+    return this.#storage.getItem(RECOBLE_URL_KEY)
   }
 }
