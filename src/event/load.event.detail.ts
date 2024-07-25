@@ -13,64 +13,12 @@ export class LoadEventDetail {
   @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
   @inject('ManageConversionInfo') private manageConversionInfo!: ManageConversionInfo
 
-  /*
-  async onLoad(currentUrl: string, currentHost: string) {
-
-    this.manageStorageData.setBrowserId(window.location.hostname)
-    this.manageStorageData.setPageStartDtm(currentDate)
-    const currentDate = new Date()
-
-    //============================================================
-
-
-    console.log('mount currentUrl', currentUrl)
-
-    const infoDto: BrowserInfoDto = await this.findBrowserInfo.findInfo()
-    this.manageStorageData.setBrowserInfo(infoDto)
-
-    //============================================================
-
-    const incompleteLogInfo = this.manageStorageData.findIncompleteLogInfo()
-
-    if (incompleteLogInfo) {
-      const data = {
-        pageEndDtm: formatDate(currentDate),
-        nextUrl: infoDto.pageUrl,
-        prevUrl: incompleteLogInfo.pageUrl,
-        browserId: incompleteLogInfo.browserId,
-        domain: window.location.hostname,
-      }
-
-      if (data.prevUrl === data.nextUrl) {
-        console.log(data.prevUrl, '<->', data.nextUrl, '<->', currentUrl)
-      }
-
-      const apiKeyHeader = findApiKeyHeader()
-      await this.sendHttpRequest.updateInCompleteLogInfo(apiKeyHeader, data)
-      this.manageStorageData.clearIncompleteLogInfo()
-    }
-
-    //============================================================
-
-    const isConversionInfoUpdated = await this.manageConversionInfo.chkIsConversionInfoUpdated()
-
-    if (isConversionInfoUpdated) {
-      this.manageConversionInfo.updateConversionInfo().then(() => {
-      })
-    }
-
-    //============================================================
-
-    this.manageStorageData.setPageActivity(PAGE_ACTIVITY_TYPE.VIEW, true)
-    this.manageStorageData.clearUnloadEventExecuted()
-  }*/
-
-  onLoad(currentUrl: string, currentHost: string) {
+  onLoad(currentUrl: string) {
     this.findBrowserInfo.findInfo().then((infoDto) => {
       console.log('onload - 0', currentUrl)
       this.manageStorageData.setBrowserInfo(infoDto)
       console.log('onload - 1', currentUrl)
-      this.#setBasicInfo(currentHost)
+      this.#setBasicInfo()
       console.log('onload - 2', currentUrl)
       this.#processIncompleteLogInfo()
       console.log('onload - 3', currentUrl)
@@ -81,8 +29,8 @@ export class LoadEventDetail {
     });
   }
 
-  #setBasicInfo(currentHost: string) {
-    this.manageStorageData.setBrowserId(currentHost)
+  #setBasicInfo() {
+    this.manageStorageData.setBrowserId(window.location.hostname)
     this.manageStorageData.setPageStartDtm(new Date())
   }
 
