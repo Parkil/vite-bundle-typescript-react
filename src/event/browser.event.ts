@@ -16,7 +16,7 @@ export class BrowserEvent {
    */
   setLoadEvent(): void {
     this.#setWindowEvent("load", () => {
-      this.loadEventDetail.onLoad().then(() => {})
+      // this.loadEventDetail.onLoad().then(() => {})
     })
   }
 
@@ -33,20 +33,20 @@ export class BrowserEvent {
       if (visibilityState == 'hidden') {
         // this.manageStorageData.findUnloadEventExecuted() === 'true'
         // 위 로직 때문에 visibilityState 가 visible <-> hidden 을 여러번 반복해도 로그는 단 한번만 전송된다
-        this.unLoadEventDetail.onUnLoad()
+        // this.unLoadEventDetail.onUnLoad()
       }
     })
   }
 
   #setPageHideEvent(): void {
     this.#setWindowEvent("pagehide", () => {
-      this.unLoadEventDetail.onUnLoad()
+      // this.unLoadEventDetail.onUnLoad()
     })
   }
 
   #setBeforeunloadEvent(): void {
     this.#setWindowEvent("beforeunload", () => {
-      this.unLoadEventDetail.onUnLoad()
+      // this.unLoadEventDetail.onUnLoad()
     })
   }
 

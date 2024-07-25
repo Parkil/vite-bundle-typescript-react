@@ -2,10 +2,9 @@ import {inject, injectable} from "inversify"
 import {ManageStorageData} from "../storage/manage.storage.data"
 import {FindBrowserInfo} from "../browserinfo/find.browser.info"
 import {ManageConversionInfo} from "../conversion/manage.conversion.info"
-import {BrowserInfoDto} from "../dtos"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
 import {SendHttpRequest} from "../sendhttprequest/send.http.request"
-import {findApiKeyHeader, formatDate} from "../util"
+import {findApiKeyHeader} from "../util"
 
 @injectable()
 export class LoadEventDetail {
@@ -14,16 +13,22 @@ export class LoadEventDetail {
   @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
   @inject('ManageConversionInfo') private manageConversionInfo!: ManageConversionInfo
 
-  async onLoad(currentUrl: string) {
+  /*
+  async onLoad(currentUrl: string, currentHost: string) {
+
+    this.manageStorageData.setBrowserId(window.location.hostname)
+    this.manageStorageData.setPageStartDtm(currentDate)
+    const currentDate = new Date()
+
+    //============================================================
+
 
     console.log('mount currentUrl', currentUrl)
 
-    this.manageStorageData.setBrowserId(window.location.hostname)
     const infoDto: BrowserInfoDto = await this.findBrowserInfo.findInfo()
-    const currentDate = new Date()
-
     this.manageStorageData.setBrowserInfo(infoDto)
-    this.manageStorageData.setPageStartDtm(currentDate)
+
+    //============================================================
 
     const incompleteLogInfo = this.manageStorageData.findIncompleteLogInfo()
 
@@ -45,12 +50,74 @@ export class LoadEventDetail {
       this.manageStorageData.clearIncompleteLogInfo()
     }
 
+    //============================================================
+
     const isConversionInfoUpdated = await this.manageConversionInfo.chkIsConversionInfoUpdated()
 
     if (isConversionInfoUpdated) {
-      this.manageConversionInfo.updateConversionInfo().then(() => {})
+      this.manageConversionInfo.updateConversionInfo().then(() => {
+      })
     }
 
+    //============================================================
+
+    this.manageStorageData.setPageActivity(PAGE_ACTIVITY_TYPE.VIEW, true)
+    this.manageStorageData.clearUnloadEventExecuted()
+  }*/
+
+  onLoad(currentUrl: string, currentHost: string) {
+    console.log('mount currentUrl', currentUrl)
+
+    this.#setBasicInfo(currentHost)
+    this.#setBrowserInfo()
+    this.#processIncompleteLogInfo()
+    this.#execChkConversion()
+    this.#postProcess()
+  }
+
+  #setBasicInfo(currentHost: string) {
+    this.manageStorageData.setBrowserId(currentHost)
+    this.manageStorageData.setPageStartDtm(new Date())
+  }
+
+  #setBrowserInfo() {
+    this.findBrowserInfo.findInfo().then((infoDto) => {
+      console.log('findBrowserInfo.findInfo() call complete')
+      this.manageStorageData.setBrowserInfo(infoDto)
+    })
+  }
+
+  #processIncompleteLogInfo() {
+    const incompleteLogInfo = this.manageStorageData.findIncompleteLogInfo()
+
+    if (incompleteLogInfo) {
+      const browserInfoDto = this.manageStorageData.findBrowserInfo()
+      console.log('incompleteLogInfo browserInfoDto : ', browserInfoDto)
+
+      const data = {
+        pageEndDtm: this.manageStorageData.findPageStartDtm(),
+        nextUrl: browserInfoDto.pageUrl,
+        prevUrl: incompleteLogInfo.pageUrl,
+        browserId: incompleteLogInfo.browserId,
+        domain: window.location.hostname,
+      }
+
+      this.sendHttpRequest.updateInCompleteLogInfo(findApiKeyHeader(), data).then(() => {
+        console.log('this.sendHttpRequest.updateInCompleteLogInfo call complete')
+        this.manageStorageData.clearIncompleteLogInfo()
+      })
+    }
+  }
+
+  #execChkConversion() {
+    this.manageConversionInfo.chkIsConversionInfoUpdated().then((isConversionInfoUpdated) => {
+      if (isConversionInfoUpdated) {
+        this.manageConversionInfo.updateConversionInfo().then(() => {})
+      }
+    })
+  }
+
+  #postProcess() {
     this.manageStorageData.setPageActivity(PAGE_ACTIVITY_TYPE.VIEW, true)
     this.manageStorageData.clearUnloadEventExecuted()
   }

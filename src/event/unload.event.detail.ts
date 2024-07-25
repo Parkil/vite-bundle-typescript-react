@@ -14,7 +14,7 @@ export class UnLoadEventDetail {
   @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
   @inject('ScrappingReview') private scrappingReview!: ScrappingReview
 
-  async onUnLoad(currentUrl: string) {
+  onUnLoad(currentUrl: string) {
 
     console.log('unmount currentUrl', currentUrl)
 
@@ -27,20 +27,21 @@ export class UnLoadEventDetail {
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
 
-    const data = await this.#assemblyData()
+    const data = this.#assemblyData()
     console.log('data : ', data)
     const userAgent = this.manageStorageData.findBrowserInfo()['userAgent']
 
     const apiKeyHeader = findApiKeyHeader()
 
-    await this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader)
-
-    this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
-    this.manageStorageData.setUnloadEventExecuted()
-    this.manageStorageData.clearUserData()
+    this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader).then(() => {
+      console.log('this.sendHttpRequest.sendLog completed')
+      this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
+      this.manageStorageData.setUnloadEventExecuted()
+      this.manageStorageData.clearUserData()
+    })
   }
 
-  async #assemblyData(): Promise<object> {
+  #assemblyData(): object {
     const browserInfo: Record<string, any> = this.manageStorageData.findBrowserInfo()
     const activityData: PageActivityType = this.manageStorageData.findPageActivity()
     const userData: Record<string, any> = this.manageStorageData.findUserData()
@@ -57,7 +58,7 @@ export class UnLoadEventDetail {
         reviewSelector['list_area_selector'], reviewSelector['row_contents_selector'], document)
     }
 
-    const conversion = await this.#assemblyConversion()
+    const conversion = this.#assemblyConversion()
 
     return {
       browserId: this.manageStorageData.findBrowserId(),
@@ -82,7 +83,7 @@ export class UnLoadEventDetail {
     }
   }
 
-  async #assemblyConversion(): Promise<object> {
+  #assemblyConversion(): object | null {
     const userData: Record<string, any> = this.manageStorageData.findUserData()
 
     const registerUser = userData.user

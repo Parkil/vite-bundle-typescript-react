@@ -22,13 +22,14 @@ export const saveRecobleUserData = (paramArr: { [key: string]: any }[]) => {
 export const useRecoblePageCycle = () => {
   useEffect(() => {
     const currentUrl = window.location.href
+    const hostname = window.location.hostname
 
-    const mount = async () => {
-      await loadEventDetail.onLoad(currentUrl)
+    const mount = () => {
+      loadEventDetail.onLoad(currentUrl, hostname)
     }
 
-    const unmount = async () => {
-      await unLoadEventDetail.onUnLoad(currentUrl)
+    const unmount = () => {
+      unLoadEventDetail.onUnLoad(currentUrl)
     }
 
     mount()
