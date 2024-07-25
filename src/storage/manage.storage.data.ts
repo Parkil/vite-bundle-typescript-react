@@ -1,21 +1,23 @@
 import {inject, injectable} from "inversify"
 import {GenBrowserId} from "../generateid/gen.browser.id"
 import {
+  RECOBLE_API_KEY_KEY,
   RECOBLE_BROWSER_ID_KEY,
   RECOBLE_BROWSER_INFO_KEY,
   RECOBLE_CONVERSION_INFO_KEY,
+  RECOBLE_CURRENT_URL_KEY,
+  RECOBLE_INCOMPLETE_LOG_INFO_KEY, RECOBLE_KEY_CONNECTOR,
   RECOBLE_PAGE_ACTIVITY_KEY,
   RECOBLE_PAGE_START_DTM_KEY,
-  RECOBLE_INCOMPLETE_LOG_INFO_KEY,
   RECOBLE_UNLOAD_EVENT_EXECUTED_KEY,
-  RECOBLE_USER_DATA_KEY,
-  RECOBLE_API_KEY_KEY, RECOBLE_URL_KEY
+  RECOBLE_USER_DATA_KEY
 } from "../constants/constants"
 import {BrowserInfoDto, PrevPageInfoDto} from "../dtos"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
 import {PageActivityType} from "../types/page.activity.type"
-import {emptyPageActivityObj, printErrorMsg, decryptAES, encryptAES, formatDate} from "../util"
+import {decryptAES, emptyPageActivityObj, encryptAES, formatDate, printErrorMsg} from "../util"
 import {Storage} from "./storage"
+import { get, set } from 'idb-keyval'
 
 @injectable()
 export class ManageStorageData {
@@ -115,8 +117,9 @@ export class ManageStorageData {
     this.#storage.removeItem(RECOBLE_UNLOAD_EVENT_EXECUTED_KEY)
   }
 
-  setUserData(targetRecord: Record<string, any>, groupKey: string) {
-    let orgRecord = this.findUserData()
+  setUserData(targetRecord: Record<string, any>, groupKey: string, idKey: string | null) {
+    console.log('setUserData idKey : ', idKey)
+    let orgRecord = this.findUserData(idKey)
     let sourceRecord = orgRecord
 
     if (groupKey !== '') {
@@ -130,20 +133,21 @@ export class ManageStorageData {
 
     Object.assign(sourceRecord, targetRecord)
 
-    this.#storage.setItem(RECOBLE_USER_DATA_KEY, JSON.stringify(orgRecord))
-    // const secret = window.location.host
-    // this.#storage.setItem(RECOBLE_USER_DATA_KEY, encryptAES(JSON.stringify(orgRecord), secret))
+    const secret = window.location.host
+    const key = RECOBLE_USER_DATA_KEY + RECOBLE_KEY_CONNECTOR + idKey
+    this.#storage.setItem(key, encryptAES(JSON.stringify(orgRecord), secret))
   }
 
-  findUserData(): Record<string, any> {
-    // const secret = window.location.host
-    const prevData = this.#storage.getItem(RECOBLE_USER_DATA_KEY)
-    return (!prevData) ? {} : JSON.parse(prevData)
-    // return (!prevData) ? {} : JSON.parse(decryptAES(prevData, secret))
+  findUserData(idKey: string | null): Record<string, any> {
+    const secret = window.location.host
+    const key = RECOBLE_USER_DATA_KEY + RECOBLE_KEY_CONNECTOR + idKey
+    const prevData = this.#storage.getItem(key)
+    return (!prevData) ? {} : JSON.parse(decryptAES(prevData, secret))
   }
 
-  clearUserData() {
-    this.#storage.removeItem(RECOBLE_USER_DATA_KEY)
+  clearUserData(idKey: string | null) {
+    const key = RECOBLE_USER_DATA_KEY + RECOBLE_KEY_CONNECTOR + idKey
+    this.#storage.removeItem(key)
   }
 
   setApiKey(apiKey: string): void {
@@ -155,11 +159,14 @@ export class ManageStorageData {
     return this.#storage.getItem(RECOBLE_API_KEY_KEY)
   }
 
-  setUrl(url: string): void {
-    this.#storage.setItem(RECOBLE_URL_KEY, url)
+  setCurrentUrl(url: string): Promise<void> {
+    console.log('setCurrentUrl called url : ', url)
+    return set(RECOBLE_CURRENT_URL_KEY, url)
+    // this.#storage.setItem(RECOBLE_CURRENT_URL_KEY, url)
   }
 
-  findUrl(): string | null {
-    return this.#storage.getItem(RECOBLE_URL_KEY)
+  findCurrentUrl(): Promise<any> {
+    return get(RECOBLE_CURRENT_URL_KEY)
+    // return this.#storage.getItem(RECOBLE_CURRENT_URL_KEY)
   }
 }

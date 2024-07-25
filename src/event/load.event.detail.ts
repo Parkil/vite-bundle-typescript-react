@@ -17,6 +17,10 @@ export class LoadEventDetail {
   async onLoad(currentUrl: string) {
 
     console.log('mount currentUrl', currentUrl)
+    console.log('------------------------------------------------------------')
+
+    await this.manageStorageData.setCurrentUrl(currentUrl)
+    console.log('setCurrentUrl completed')
 
     this.manageStorageData.setBrowserId(window.location.hostname)
     const infoDto: BrowserInfoDto = await this.findBrowserInfo.findInfo()
@@ -37,7 +41,7 @@ export class LoadEventDetail {
       }
 
       if (data.prevUrl === data.nextUrl) {
-        console.log(data.prevUrl, '<->', data.nextUrl, '<->', currentUrl)
+        console.log(data.prevUrl, '<->', data.nextUrl, '<->', await this.manageStorageData.findCurrentUrl())
       }
 
       const apiKeyHeader = findApiKeyHeader()

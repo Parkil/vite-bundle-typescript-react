@@ -31,20 +31,22 @@ export abstract class SaveUserData {
   @inject('ManageStorageData') private manageStorageData!: ManageStorageData
 
   save(param: { [key: string]: any }): boolean {
-    if (!this.validateParam(param)) {
+    if (!this.#validateParam(param)) {
       printErrorMsg(this.validateErrorMsg)
       return false
     } else {
-      this.saveUserData(param)
+      this.#saveUserData(param)
       return true
     }
   }
 
-  private saveUserData(param: { [key: string]: any }) {
-    this.manageStorageData.setUserData(this.modifyData(param), this.getGroupKey())
+  #saveUserData(param: { [key: string]: any }) {
+    this.manageStorageData.findCurrentUrl().then((url) => {
+      this.manageStorageData.setUserData(this.#modifyData(param), this.getGroupKey(), url)
+    })
   }
 
-  private modifyData(param: { [key: string]: any }): { [key: string]: any } {
+  #modifyData(param: { [key: string]: any }): { [key: string]: any } {
     let modifyParam: { [key: string]: any } = {}
     delete param['event']
     const remainKeyArr = Object.keys(param)
@@ -60,7 +62,7 @@ export abstract class SaveUserData {
     return modifyParam
   }
 
-  private validateParam(data: ValidateTargetRecord): boolean {
+  #validateParam(data: ValidateTargetRecord): boolean {
     let errorMsg = validateMultiParam(this.getValidateOption(), [data])
     this.validateErrorMsg = errorMsg
     return errorMsg === ''

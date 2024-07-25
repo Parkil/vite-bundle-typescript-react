@@ -27,23 +27,24 @@ export class UnLoadEventDetail {
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
 
-    const data = await this.#assemblyData()
-    console.log('data : ', data)
+    const data = await this.#assemblyData(currentUrl)
     const userAgent = this.manageStorageData.findBrowserInfo()['userAgent']
 
     const apiKeyHeader = findApiKeyHeader()
 
+    console.log('sendLog data : ', data)
     await this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader)
 
     this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
     this.manageStorageData.setUnloadEventExecuted()
-    this.manageStorageData.clearUserData()
+    this.manageStorageData.clearUserData(currentUrl)
   }
 
-  async #assemblyData(): Promise<object> {
+  async #assemblyData(currentUrl: string): Promise<object> {
     const browserInfo: Record<string, any> = this.manageStorageData.findBrowserInfo()
     const activityData: PageActivityType = this.manageStorageData.findPageActivity()
-    const userData: Record<string, any> = this.manageStorageData.findUserData()
+
+    const userData: Record<string, any> = this.manageStorageData.findUserData(currentUrl)
 
     const loginAccount = userData.loginAccount
     const reviewSelector = userData.reviewSelector
@@ -57,7 +58,7 @@ export class UnLoadEventDetail {
         reviewSelector['list_area_selector'], reviewSelector['row_contents_selector'], document)
     }
 
-    const conversion = await this.#assemblyConversion()
+    const conversion = await this.#assemblyConversion(userData)
 
     return {
       browserId: this.manageStorageData.findBrowserId(),
@@ -82,8 +83,7 @@ export class UnLoadEventDetail {
     }
   }
 
-  async #assemblyConversion(): Promise<object> {
-    const userData: Record<string, any> = this.manageStorageData.findUserData()
+  async #assemblyConversion(userData: Record<string, any>): Promise<object | null> {
 
     const registerUser = userData.user
     const productView = userData.product?.productView
