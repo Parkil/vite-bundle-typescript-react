@@ -16,20 +16,24 @@ export class LoadEventDetail {
 
   async onLoad(currentUrl: string) {
 
-    console.log('mount currentUrl', currentUrl)
-    console.log('------------------------------------------------------------')
+    console.log('onLoad - 0', currentUrl)
 
     await this.manageStorageData.setCurrentUrl(currentUrl)
-    console.log('setCurrentUrl completed')
 
     this.manageStorageData.setBrowserId(window.location.hostname)
     const infoDto: BrowserInfoDto = await this.findBrowserInfo.findInfo()
     const currentDate = new Date()
 
+    console.log('onLoad - 1', currentUrl)
+
     this.manageStorageData.setBrowserInfo(infoDto)
     this.manageStorageData.setPageStartDtm(currentDate)
 
+    console.log('onLoad - 2', currentUrl)
+
     const incompleteLogInfo = this.manageStorageData.findIncompleteLogInfo()
+
+    console.log('onLoad - 3', currentUrl)
 
     if (incompleteLogInfo) {
       const data = {
@@ -49,13 +53,21 @@ export class LoadEventDetail {
       this.manageStorageData.clearIncompleteLogInfo()
     }
 
+    console.log('onLoad - 4', currentUrl)
+
     const isConversionInfoUpdated = await this.manageConversionInfo.chkIsConversionInfoUpdated()
+
+    console.log('onLoad - 5', currentUrl)
 
     if (isConversionInfoUpdated) {
       this.manageConversionInfo.updateConversionInfo().then(() => {})
     }
 
+    console.log('onLoad - 6', currentUrl)
+
     this.manageStorageData.setPageActivity(PAGE_ACTIVITY_TYPE.VIEW, true)
     this.manageStorageData.clearUnloadEventExecuted()
+
+    console.log('onLoad - 7', currentUrl)
   }
 }

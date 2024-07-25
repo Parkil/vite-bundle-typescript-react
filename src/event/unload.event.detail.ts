@@ -23,21 +23,32 @@ export class UnLoadEventDetail {
       return
     }
 
+    console.log('unload - 1')
+
     this.manageStorageData.setPageActivity(PAGE_ACTIVITY_TYPE.SCROLL, calcScrollLoc())
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
 
+    console.log('unload - 2')
+
     const data = await this.#assemblyData(currentUrl)
     const userAgent = this.manageStorageData.findBrowserInfo()['userAgent']
 
+    console.log('unload - 3')
+
     const apiKeyHeader = findApiKeyHeader()
 
-    console.log('sendLog data : ', data)
+    console.log('unload - 4')
+
     await this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader)
+
+    console.log('unload - 5')
 
     this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
     this.manageStorageData.setUnloadEventExecuted()
     this.manageStorageData.clearUserData(currentUrl)
+
+    console.log('unload - 6')
   }
 
   async #assemblyData(currentUrl: string): Promise<object> {

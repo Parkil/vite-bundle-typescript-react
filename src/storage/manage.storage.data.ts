@@ -118,7 +118,6 @@ export class ManageStorageData {
   }
 
   setUserData(targetRecord: Record<string, any>, groupKey: string, idKey: string | null) {
-    console.log('setUserData idKey : ', idKey)
     let orgRecord = this.findUserData(idKey)
     let sourceRecord = orgRecord
 
@@ -151,7 +150,6 @@ export class ManageStorageData {
   }
 
   setApiKey(apiKey: string): void {
-    console.log('apiKey: ', apiKey)
     this.#storage.setItem(RECOBLE_API_KEY_KEY, apiKey)
   }
 
@@ -160,7 +158,6 @@ export class ManageStorageData {
   }
 
   setCurrentUrl(url: string): Promise<void> {
-    console.log('setCurrentUrl called url : ', url)
     return set(RECOBLE_CURRENT_URL_KEY, url)
     // this.#storage.setItem(RECOBLE_CURRENT_URL_KEY, url)
   }

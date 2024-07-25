@@ -12,20 +12,29 @@ const manageStorageData = container.get<ManageStorageData>('ManageStorageData')
 
 
 export const initRecoble = (apiKey: string) => {
+  console.log('1.apikey : ', apiKey)
   manageStorageData.setApiKey(apiKey)
 }
 
-export const saveRecobleUserData = (paramArr: { [key: string]: any }[]) => {
-  manageSaveUserData.save(paramArr)
-}
-
 export const useRecoblePageCycle = () => {
+  console.log('2.beforeUseEffect')
   useEffect(() => {
-
+    console.log('2.useEffect')
     const currentUrl = window.location.href
+    console.log('2.useEffect-1')
     loadEventDetail.onLoad(currentUrl).then(() => {})
+    console.log('2.useEffect-2')
     return () => {
+      console.log('2.useEffect-unmount-1')
       unLoadEventDetail.onUnLoad(currentUrl).then(() => {})
+      console.log('2.useEffect-unmount-2')
     }
   },[])
 }
+
+export const saveRecobleUserData = (paramArr: { [key: string]: any }[]) => {
+  console.log('3.saveUserData')
+  manageSaveUserData.save(paramArr)
+  console.log('3.saveUserData - 1')
+}
+
