@@ -66,25 +66,24 @@ export class LoadEventDetail {
   }*/
 
   onLoad(currentUrl: string, currentHost: string) {
-    console.log('mount currentUrl', currentUrl)
-
-    this.#setBasicInfo(currentHost)
-    this.#setBrowserInfo()
-    this.#processIncompleteLogInfo()
-    this.#execChkConversion()
-    this.#postProcess()
+    this.findBrowserInfo.findInfo().then((infoDto) => {
+      console.log('onload - 0', currentUrl)
+      this.manageStorageData.setBrowserInfo(infoDto)
+      console.log('onload - 1', currentUrl)
+      this.#setBasicInfo(currentHost)
+      console.log('onload - 2', currentUrl)
+      this.#processIncompleteLogInfo()
+      console.log('onload - 3', currentUrl)
+      this.#execChkConversion()
+      console.log('onload - 4', currentUrl)
+      this.#postProcess()
+      console.log('onload - 5', currentUrl)
+    });
   }
 
   #setBasicInfo(currentHost: string) {
     this.manageStorageData.setBrowserId(currentHost)
     this.manageStorageData.setPageStartDtm(new Date())
-  }
-
-  #setBrowserInfo() {
-    this.findBrowserInfo.findInfo().then((infoDto) => {
-      console.log('findBrowserInfo.findInfo() call complete')
-      this.manageStorageData.setBrowserInfo(infoDto)
-    })
   }
 
   #processIncompleteLogInfo() {

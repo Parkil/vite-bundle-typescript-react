@@ -1,4 +1,4 @@
-import "reflect-metadata"
+import "@abraham/reflection"
 import {Container} from "inversify"
 import {FindBrowserInfo} from "../browserinfo/find.browser.info"
 import {AxiosClient} from "../httpclient/axios.client"

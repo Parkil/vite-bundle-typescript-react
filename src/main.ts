@@ -12,14 +12,12 @@ const manageStorageData = container.get<ManageStorageData>('ManageStorageData')
 
 
 export const initRecoble = (apiKey: string) => {
+  console.log('1. initRecoble')
   manageStorageData.setApiKey(apiKey)
 }
 
-export const saveRecobleUserData = (paramArr: { [key: string]: any }[]) => {
-  manageSaveUserData.save(paramArr)
-}
-
 export const useRecoblePageCycle = () => {
+  console.log('2. useRecoblePageCycle')
   useEffect(() => {
     const currentUrl = window.location.href
     const hostname = window.location.hostname
@@ -37,4 +35,12 @@ export const useRecoblePageCycle = () => {
       unmount()
     }
   },[])
+  console.log('2. useRecoblePageCycle - 1')
 }
+
+export const saveRecobleUserData = (paramArr: { [key: string]: any }[]) => {
+  console.log('3. saveRecobleUserData')
+  manageSaveUserData.save(paramArr)
+  console.log('3. saveRecobleUserData - 1')
+}
+
