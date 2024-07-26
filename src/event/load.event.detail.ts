@@ -5,6 +5,7 @@ import {ManageConversionInfo} from "../conversion/manage.conversion.info"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
 import {SendHttpRequest} from "../sendhttprequest/send.http.request"
 import {findApiKeyHeader} from "../util"
+import {BrowserInfoDto} from "../dtos";
 
 @injectable()
 export class LoadEventDetail {
@@ -13,44 +14,42 @@ export class LoadEventDetail {
   @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
   @inject('ManageConversionInfo') private manageConversionInfo!: ManageConversionInfo
 
-  onLoad(currentUrl: string) {
-    this.findBrowserInfo.findInfo().then((infoDto) => {
-      console.log('onload - 0', currentUrl)
-      this.manageStorageData.setBrowserInfo(infoDto)
-      console.log('onload - 1', currentUrl)
-      this.#setBasicInfo()
-      console.log('onload - 2', currentUrl)
-      this.#processIncompleteLogInfo()
-      console.log('onload - 3', currentUrl)
-      this.#execChkConversion()
-      console.log('onload - 4', currentUrl)
-      this.#postProcess()
-      console.log('onload - 5', currentUrl)
-    });
+  onLoad() {
+    this.#setBasicInfo()
+    this.#updateInCompleteLogInfo()
+    this.#execChkConversion()
+    this.#postProcess()
   }
 
   #setBasicInfo() {
-    this.manageStorageData.setBrowserId(window.location.hostname)
-    this.manageStorageData.setPageStartDtm(new Date())
+    this.manageStorageData.setBrowserId(this.manageStorageData.findCurrentHostName() ?? "")
   }
 
-  #processIncompleteLogInfo() {
+  #updateInCompleteLogInfo() {
+    this.findBrowserInfo.findInfo().then((infoDto) => {
+      this.#sendLog(infoDto)
+    });
+  }
+
+  #sendLog(infoDto: BrowserInfoDto) {
+    this.manageStorageData.setBrowserInfo(infoDto)
     const incompleteLogInfo = this.manageStorageData.findIncompleteLogInfo()
+    this.manageStorageData.setPageStartDtm(new Date())
 
     if (incompleteLogInfo) {
       const browserInfoDto = this.manageStorageData.findBrowserInfo()
-      console.log('incompleteLogInfo browserInfoDto : ', browserInfoDto)
 
       const data = {
         pageEndDtm: this.manageStorageData.findPageStartDtm(),
         nextUrl: browserInfoDto.pageUrl,
         prevUrl: incompleteLogInfo.pageUrl,
         browserId: incompleteLogInfo.browserId,
-        domain: window.location.hostname,
+        domain: this.manageStorageData.findCurrentHostName() ?? "",
       }
 
+      console.log('updateInCompleteLogInfo data : ', data)
+
       this.sendHttpRequest.updateInCompleteLogInfo(findApiKeyHeader(), data).then(() => {
-        console.log('this.sendHttpRequest.updateInCompleteLogInfo call complete')
         this.manageStorageData.clearIncompleteLogInfo()
       })
     }

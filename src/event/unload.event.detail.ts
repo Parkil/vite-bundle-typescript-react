@@ -16,35 +16,31 @@ export class UnLoadEventDetail {
 
   onUnLoad(currentUrl: string) {
 
-    console.log('unmount currentUrl', currentUrl)
-
     // window sessionStorage 가 비동기 상황에서 정상적으로 작동하지 않는다
-    if (this.manageStorageData.findUnloadEventExecuted() === 'true') {
-      return
-    }
+    // if (this.manageStorageData.findUnloadEventExecuted() === 'true') {
+    //   return
+    // }
 
     this.manageStorageData.setPageActivity(PAGE_ACTIVITY_TYPE.SCROLL, calcScrollLoc())
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
 
-    const data = this.#assemblyData()
-    console.log('data : ', data)
+    const data = this.#assemblyData(currentUrl)
     const userAgent = this.manageStorageData.findBrowserInfo()['userAgent']
 
     const apiKeyHeader = findApiKeyHeader()
 
     this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader).then(() => {
-      console.log('this.sendHttpRequest.sendLog completed')
       this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
       this.manageStorageData.setUnloadEventExecuted()
-      this.manageStorageData.clearUserData()
+      this.manageStorageData.clearUserData(currentUrl)
     })
   }
 
-  #assemblyData(): object {
+  #assemblyData(currentUrl: string): object {
     const browserInfo: Record<string, any> = this.manageStorageData.findBrowserInfo()
     const activityData: PageActivityType = this.manageStorageData.findPageActivity()
-    const userData: Record<string, any> = this.manageStorageData.findUserData()
+    const userData: Record<string, any> = this.manageStorageData.findUserData(currentUrl)
 
     const loginAccount = userData.loginAccount
     const reviewSelector = userData.reviewSelector
