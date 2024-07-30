@@ -5,7 +5,7 @@ import {ManageConversionInfo} from "../conversion/manage.conversion.info"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
 import {SendHttpRequest} from "../sendhttprequest/send.http.request"
 import {findApiKeyHeader} from "../util"
-import {BrowserInfoDto} from "../dtos";
+import {BrowserInfoDto} from "../dtos"
 
 @injectable()
 export class LoadEventDetail {
@@ -28,7 +28,7 @@ export class LoadEventDetail {
   #updateInCompleteLogInfo() {
     this.findBrowserInfo.findInfo().then((infoDto) => {
       this.#sendLog(infoDto)
-    });
+    })
   }
 
   #sendLog(infoDto: BrowserInfoDto) {
@@ -47,11 +47,11 @@ export class LoadEventDetail {
         domain: this.manageStorageData.findCurrentHostName() ?? "",
       }
 
-      console.log('updateInCompleteLogInfo data : ', data)
-
-      this.sendHttpRequest.updateInCompleteLogInfo(findApiKeyHeader(), data).then(() => {
-        this.manageStorageData.clearIncompleteLogInfo()
-      })
+      if (data.prevUrl !== data.nextUrl) {
+        this.sendHttpRequest.updateInCompleteLogInfo(findApiKeyHeader(), data).then(() => {
+          this.manageStorageData.clearIncompleteLogInfo()
+        })
+      }
     }
   }
 

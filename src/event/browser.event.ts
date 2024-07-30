@@ -1,13 +1,13 @@
 import {chkBrowserIsValid, printErrorMsg} from "../util"
-import {inject, injectable} from "inversify"
-import {LoadEventDetail} from "./load.event.detail"
-import {UnLoadEventDetail} from "./unload.event.detail"
+import {injectable} from "inversify"
+// import {LoadEventDetail} from "./load.event.detail"
+// import {UnLoadEventDetail} from "./unload.event.detail"
 
 @injectable()
 export class BrowserEvent {
 
-  @inject('LoadEventDetail') private loadEventDetail!: LoadEventDetail
-  @inject('UnLoadEventDetail') private unLoadEventDetail!: UnLoadEventDetail
+  // @inject('LoadEventDetail') private loadEventDetail!: LoadEventDetail
+  // @inject('UnLoadEventDetail') private unLoadEventDetail!: UnLoadEventDetail
 
   /*
     주의 할점

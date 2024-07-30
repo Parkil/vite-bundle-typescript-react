@@ -1,9 +1,9 @@
-import {useEffect} from "react";
+import {useEffect} from "react"
 import container from "./config/inversify_config"
-import {LoadEventDetail} from "./event/load.event.detail.ts";
-import {ManageSaveUserData} from "./userdata/manage.save.user.data.ts";
-import {ManageStorageData} from "./storage/manage.storage.data.ts";
-import {UnLoadEventDetail} from "./event/unload.event.detail.ts";
+import {LoadEventDetail} from "./event/load.event.detail.ts"
+import {ManageSaveUserData} from "./userdata/manage.save.user.data.ts"
+import {ManageStorageData} from "./storage/manage.storage.data.ts"
+import {UnLoadEventDetail} from "./event/unload.event.detail.ts"
 
 const loadEventDetail = container.get<LoadEventDetail>('LoadEventDetail')
 const unLoadEventDetail = container.get<UnLoadEventDetail>('UnLoadEventDetail')

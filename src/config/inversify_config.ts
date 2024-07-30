@@ -31,6 +31,7 @@ import {SetReviewSelector} from "../userdata/impl/set.review.selector"
 import {ScrappingReview} from "../scrapping/scrapping.review"
 import {SetSearchWord} from "../userdata/impl/set.search.word"
 import {SetPageName} from "../userdata/impl/set.page.name"
+import {IndexedDb} from "../indexeddb/indexed.db.ts"
 
 const container = new Container()
 
@@ -65,5 +66,6 @@ container.bind<LoadEventDetail>('LoadEventDetail').to(LoadEventDetail)
 container.bind<UnLoadEventDetail>('UnLoadEventDetail').to(UnLoadEventDetail)
 container.bind<SendHttpRequest>('SendHttpRequest').to(SendHttpRequest)
 container.bind<ScrappingReview>('ScrappingReview').to(ScrappingReview)
+container.bind<IndexedDb>('IndexedDb').to(IndexedDb)
 
 export default container

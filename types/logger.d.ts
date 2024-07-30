@@ -1,1 +1,1 @@
-export declare const logger: (data: string) => void;
+export declare const logger: (data: string) => void

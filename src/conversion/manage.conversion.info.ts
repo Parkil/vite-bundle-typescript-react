@@ -3,7 +3,7 @@ import {AxiosClient} from "../httpclient/axios.client"
 import {CONVERSION_INFO_SERVER_URL} from "../constants/constants"
 import HTTP_METHOD from "../enums/http.method"
 import {ManageStorageData} from "../storage/manage.storage.data"
-import {findApiKeyHeader} from "../util";
+import {findApiKeyHeader} from "../util"
 
 @injectable()
 export class ManageConversionInfo {

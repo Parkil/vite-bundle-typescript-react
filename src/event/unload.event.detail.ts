@@ -16,6 +16,14 @@ export class UnLoadEventDetail {
 
   onUnLoad(currentUrl: string) {
 
+    const openDBRequest = indexedDB.open("recobleLog", 1.0)
+
+    openDBRequest.onupgradeneeded = () => {
+      // createObjectStore 는 onupgradeneeded 이벤트 내에서만 호출 가능
+      openDBRequest.result.createObjectStore('logDetail', {keyPath: 'id', autoIncrement: true})
+      openDBRequest.result.createObjectStore('lastLog', {keyPath: 'id', autoIncrement: true})
+    }
+
     // window sessionStorage 가 비동기 상황에서 정상적으로 작동하지 않는다
     // if (this.manageStorageData.findUnloadEventExecuted() === 'true') {
     //   return
@@ -29,6 +37,37 @@ export class UnLoadEventDetail {
     const userAgent = this.manageStorageData.findBrowserInfo()['userAgent']
 
     const apiKeyHeader = findApiKeyHeader()
+    /*
+    console.log('--------------------------------')
+    console.log('onUnLoad currentUrl : ', currentUrl)
+    console.log('onUnLoad data : ', data)
+    console.log('--------------------------------')
+    */
+
+    let db: IDBDatabase
+    openDBRequest.onsuccess = () => {
+      db = openDBRequest.result
+      db.transaction(['logDetail'], 'readwrite')
+        .objectStore('logDetail')
+        .add(data).onsuccess = () => console.log('added')
+
+      db.transaction(['logDetail'], 'readonly')
+        .objectStore('logDetail')
+        .getAll()
+        .onsuccess = (data) => {
+          console.log(data)
+        /*
+          const test111 = data.target['result']
+          if (test111.length >= 10) {
+            console.log('------------------------')
+            console.log('삭제 예정 data')
+            console.log(test111)
+            console.log('------------------------')
+
+            db.transaction(['logDetail'], 'readwrite').objectStore('logDetail').clear().onsuccess = () => {console.log('cleared')}
+          }*/
+        }
+    }
 
     this.sendHttpRequest.sendLog(data, userAgent, apiKeyHeader).then(() => {
       this.manageStorageData.setIncompleteLogInfo(this.manageStorageData.findBrowserId(), currentUrl)
@@ -39,6 +78,8 @@ export class UnLoadEventDetail {
 
   #assemblyData(currentUrl: string): object {
     const browserInfo: Record<string, any> = this.manageStorageData.findBrowserInfo()
+    browserInfo['pageUrl'] = currentUrl
+
     const activityData: PageActivityType = this.manageStorageData.findPageActivity()
     const userData: Record<string, any> = this.manageStorageData.findUserData(currentUrl)
 
@@ -55,6 +96,7 @@ export class UnLoadEventDetail {
     }
 
     const conversion = this.#assemblyConversion()
+
 
     return {
       browserId: this.manageStorageData.findBrowserId(),
