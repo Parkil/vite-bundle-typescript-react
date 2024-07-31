@@ -1,3 +1,5 @@
+export const INDEXED_DB_LOG_DETAIL = 'logDetail'
+export const INDEXED_DB_LAST_LOG = 'latestLog'
 export const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json'
 export const LOG_SERVER_SEND_LOG_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/send_log`
 export const LOG_SERVER_UPDATE_INCOMPLETE_LOG_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/update_incomplete_log`

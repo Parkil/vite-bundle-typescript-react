@@ -2,7 +2,7 @@ import {injectable} from "inversify"
 import {optionType} from "../types/indexed.db.type.ts"
 
 @injectable()
-export class IndexedDb {
+export class IndexedDbWrapper {
   connectIndexedDB(dbName: string, version: number, options?: optionType[]): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(dbName, version)
