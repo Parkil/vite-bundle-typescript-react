@@ -1,10 +1,7 @@
 export const GEO_URL = 'https://get.geojs.io/v1/ip/geo.json'
-export const LOG_SERVER_SEND_LOG_URL = ''
-export const LOG_SERVER_UPDATE_INCOMPLETE_LOG_URL = ''
-export const CONVERSION_INFO_SERVER_URL = ''
-// export const LOG_SERVER_SEND_LOG_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/send_log`
-// export const LOG_SERVER_UPDATE_INCOMPLETE_LOG_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/update_incomplete_log`
-// export const CONVERSION_INFO_SERVER_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/conversion_info_dummy`
+export const LOG_SERVER_SEND_LOG_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/send_log`
+export const LOG_SERVER_UPDATE_INCOMPLETE_LOG_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/update_incomplete_log`
+export const CONVERSION_INFO_SERVER_URL = `${import.meta.env.VITE_LOG_SERVER_DOMAIN}/conversion_info_dummy`
 export const RECOBLE_KEY = 'recoble'
 export const RECOBLE_KEY_PREFIX = RECOBLE_KEY
 export const RECOBLE_KEY_CONNECTOR = '.'

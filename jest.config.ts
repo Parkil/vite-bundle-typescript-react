@@ -14,7 +14,32 @@ const config: Config = {
   coveragePathIgnorePatterns: ["index.ts", "type.ts"], // test coverage 에서 제외할 파일 / 패턴 지정
   watchAll: false, // 해당 패키지의 전체 파일을 coverage 대상으로 지정하는지 여부
   preset: "ts-jest",
-  setupFiles: ["fake-indexeddb/auto"] // indexeddb 테스트를 위한 fake db 설정
+  setupFiles: ["fake-indexeddb/auto"], // indexeddb 테스트를 위한 fake db 설정
+  transform: { // the 'import.meta' meta-property is only allowed ~ 오류 대응
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        diagnostics: {
+          ignoreCodes: [1343],
+        },
+        astTransformers: {
+          before: [
+            {
+              path: 'node_modules/ts-jest-mock-import-meta',
+              options: {
+                metaObjectReplacement: {
+                  env: {
+                    // Replicate as .env.local
+                    VITE_LOG_SERVER_DOMAIN: 'http://localhost:3001',
+                  },
+                },
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
 }
 
 export default config
