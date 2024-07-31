@@ -14,6 +14,8 @@ export class UnLoadEventDetail {
   @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
   @inject('ScrappingReview') private scrappingReview!: ScrappingReview
 
+
+
   onUnLoad(currentUrl: string) {
 
     const openDBRequest = indexedDB.open("recobleLog", 1.0)

@@ -32,6 +32,8 @@ import {ScrappingReview} from "../scrapping/scrapping.review"
 import {SetSearchWord} from "../userdata/impl/set.search.word"
 import {SetPageName} from "../userdata/impl/set.page.name"
 import {IndexedDbWrapper} from "../indexeddb/indexed.db.wrapper.ts"
+import {ManageLogData} from "../logdata/manage.log.data.ts"
+import {SetCompleteInfo} from "../logdata/set.complete.info.ts";
 
 const container = new Container()
 
@@ -67,5 +69,7 @@ container.bind<UnLoadEventDetail>('UnLoadEventDetail').to(UnLoadEventDetail)
 container.bind<SendHttpRequest>('SendHttpRequest').to(SendHttpRequest)
 container.bind<ScrappingReview>('ScrappingReview').to(ScrappingReview)
 container.bind<IndexedDbWrapper>('IndexedDbWrapper').to(IndexedDbWrapper)
+container.bind<ManageLogData>('ManageLogData').to(ManageLogData)
+container.bind<SetCompleteInfo>('SetCompleteInfo').to(SetCompleteInfo)
 
 export default container
