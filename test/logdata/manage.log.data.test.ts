@@ -1,45 +1,64 @@
-import {beforeAll, describe, expect, test} from '@jest/globals'
+import {afterEach, beforeAll, describe, expect, jest, test} from '@jest/globals'
 import container from "../../src/config/inversify_config"
 import {ManageLogData} from "../../src/logdata/manage.log.data"
-import {IndexedDbWrapper} from "../../src/indexeddb/indexed.db.wrapper";
-import {INDEXED_DB_LAST_LOG, INDEXED_DB_LOG_DETAIL} from "../../src/constants/constants";
+import {mockFunction} from "../util/test.util"
+import {SendHttpRequest} from "../../src/sendhttprequest/send.http.request"
+import {ManageStorageData} from "../../src/storage/manage.storage.data"
+import {
+  addLogParam_1,
+  addLogParam_2,
+  sendLogParam_1_apiHeader,
+  sendLogParam_1_data,
+  sendLogParam_1_userAgent,
+  sendLogParam_2_apiHeader,
+  sendLogParam_2_data,
+  sendLogParam_2_userAgent
+} from "./manage.log.data.test.data"
+import SpiedClass = jest.SpiedClass
+import SpiedFunction = jest.SpiedFunction
 
 describe('manageLogData', () => {
   let manageLogData: ManageLogData
-  let indexedDbWrapper: IndexedDbWrapper
-  let dbObj: IDBDatabase
+  let sendLogMock: SpiedClass<any> | SpiedFunction<any>
 
   beforeAll(async () => {
     manageLogData = container.get<ManageLogData>('ManageLogData')
-    indexedDbWrapper = container.get<IndexedDbWrapper>('IndexedDbWrapper')
 
-    const options = [
-      {
-        'storeName': INDEXED_DB_LOG_DETAIL,
-        'subOption': {keyPath: 'id', autoIncrement: true}
-      },
-      {
-        'storeName': INDEXED_DB_LAST_LOG,
-        'subOption': {keyPath: 'id', autoIncrement: true}
-      }
-    ]
+    sendLogMock = mockFunction(SendHttpRequest.prototype, 'sendLog', async (data, userAgent, apiKey) => {
+      console.log('sendLog param : ', data, '/', userAgent, '/', apiKey)
+    })
 
-    dbObj = await indexedDbWrapper.connectIndexedDB('RecobleDB', 1, options)
+    mockFunction(ManageStorageData.prototype, 'findApiKey', () => {
+      return 'dummy API Key'
+    })
   })
 
-  const data1 = {"browserId":"5597adf0-4989-565b-8bd2-f8951a44614e","pageName":"메인페이지","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36","referrer":"","pageUrl":"http://localhost:3000/","ip":"121.125.238.186","countryCode":"KR","pageStartDtm":"2024-08-01T01:33:00","pageEndDtm":null,"pageActivity":{"view":true,"scroll":0,"click":false},"pageMoveType":{"isNextPage":false,"isExitPage":false,"isLeavePage":false}}
-  const data2 = {"browserId":"5597adf0-4989-565b-8bd2-f8951a44614e","pageName":"다음페이지","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36","referrer":"","pageUrl":"http://localhost:3000/next","ip":"121.125.238.186","countryCode":"KR","pageStartDtm":"2024-08-01T01:33:03","pageEndDtm":null,"pageActivity":{"view":true,"scroll":0,"click":false},"pageMoveType":{"isNextPage":false,"isExitPage":false,"isLeavePage":false}}
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
 
-  test('test', async () => {
-    await manageLogData.addLog(data1, 2)
-    await manageLogData.addLog(data2, 2)
-    await manageLogData.addLog(data1, 2)
-    await manageLogData.addLog(data2, 2)
+  test('capacity 에 저장된 로그 개수가 미치지 못하는 경우', async () => {
+    await manageLogData.addLog(addLogParam_1, 2)
 
-    console.log('INDEXED_DB_LOG_DETAIL : ', await indexedDbWrapper.findAll(dbObj, INDEXED_DB_LOG_DETAIL))
-    console.log('INDEXED_DB_LAST_LOG : ', await indexedDbWrapper.findAll(dbObj, INDEXED_DB_LAST_LOG))
+    expect(sendLogMock).toHaveBeenCalledTimes(0)
+  })
 
-    const aaa = "111"
-    expect(aaa).toEqual("111")
+  test('capacity 1회 달성', async () => {
+    await manageLogData.addLog(addLogParam_1, 2)
+    await manageLogData.addLog(addLogParam_2, 2)
+
+    expect(sendLogMock).toHaveBeenCalledTimes(1)
+    expect(sendLogMock).toBeCalledWith(sendLogParam_1_data, sendLogParam_1_userAgent, sendLogParam_1_apiHeader)
+  })
+
+  test('capacity 2회 달성', async () => {
+    await manageLogData.addLog(addLogParam_1, 2)
+    await manageLogData.addLog(addLogParam_2, 2)
+    await manageLogData.addLog(addLogParam_1, 2)
+    await manageLogData.addLog(addLogParam_2, 2)
+
+    expect(sendLogMock).toHaveBeenCalledTimes(2)
+    expect(sendLogMock).toBeCalledWith(sendLogParam_1_data, sendLogParam_1_userAgent, sendLogParam_1_apiHeader)
+    expect(sendLogMock).toBeCalledWith(sendLogParam_2_data, sendLogParam_2_userAgent, sendLogParam_2_apiHeader)
   })
 })

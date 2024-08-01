@@ -33,7 +33,7 @@ import {SetSearchWord} from "../userdata/impl/set.search.word"
 import {SetPageName} from "../userdata/impl/set.page.name"
 import {IndexedDbWrapper} from "../indexeddb/indexed.db.wrapper.ts"
 import {ManageLogData} from "../logdata/manage.log.data.ts"
-import {SetCompleteInfo} from "../logdata/set.complete.info.ts";
+import {SetCompleteInfo} from "../logdata/set.complete.info.ts"
 
 const container = new Container()
 

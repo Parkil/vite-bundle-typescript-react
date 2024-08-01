@@ -1,14 +1,16 @@
 import {inject, injectable} from "inversify"
 import {IndexedDbWrapper} from "../indexeddb/indexed.db.wrapper.ts"
 import {INDEXED_DB_LAST_LOG, INDEXED_DB_LOG_DETAIL} from "../constants/constants.ts"
-import {printErrorMsg} from "../util"
+import {findApiKeyHeader, printErrorMsg} from "../util"
 import {SetCompleteInfo} from "./set.complete.info.ts"
-import {logDataType} from "../types/log.data.type.ts";
+import {logDataType} from "../types/log.data.type.ts"
+import {SendHttpRequest} from "../sendhttprequest/send.http.request.ts"
 
 @injectable()
 export class ManageLogData {
   @inject('IndexedDbWrapper') private indexedDbWrapper!: IndexedDbWrapper
   @inject('SetCompleteInfo') private setCompleteInfo!: SetCompleteInfo
+  @inject('SendHttpRequest') private sendHttpRequest!: SendHttpRequest
 
   /*
     0. INDEXED_DB_LOG_DETAIL 에 데이터 추가
@@ -42,14 +44,17 @@ export class ManageLogData {
       const lastLogList = await this.indexedDbWrapper.findAll(database, INDEXED_DB_LAST_LOG)
       const concatList = [...lastLogList, ...logDetailList]
 
-      await this.setCompleteInfo.setInfo(concatList)
+      const completeList = await this.setCompleteInfo.setInfo(concatList)
 
       await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LAST_LOG)
       const lastElement = concatList[concatList.length - 1]
       lastElement.isLastLog = true
       await this.indexedDbWrapper.addData(database, INDEXED_DB_LAST_LOG, lastElement)
 
-      //로그 서버에 데이터 전송
+      const userAgentStr = completeList[0].userAgent
+      const apiKeyHeader = findApiKeyHeader()
+
+      await this.sendHttpRequest.sendLog(completeList, userAgentStr, apiKeyHeader)
       await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LOG_DETAIL)
     }
   }

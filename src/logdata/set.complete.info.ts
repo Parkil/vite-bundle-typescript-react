@@ -1,4 +1,4 @@
-import {injectable} from "inversify";
+import {injectable} from "inversify"
 import {logDataType} from "../types/log.data.type.ts"
 
 @injectable()
@@ -22,7 +22,6 @@ export class SetCompleteInfo {
       completeInfoList.push(item)
     })
 
-    console.log('SetCompleteInfo completeInfoList : ', completeInfoList)
     return completeInfoList
   }
 }
