@@ -1,9 +1,9 @@
-export type logDataType = {
+export type LogData = {
   browserId: string,
   searchWord?: string,
   pageName?: string,
   reviewList?: string[],
-  loginAccount?: {hash_account: string, hash_method: string},
+  loginAccount?: { hash_account: string, hash_method: string },
   userAgent: string,
   referrer: string,
   pageUrl: string,
@@ -13,6 +13,11 @@ export type logDataType = {
   pageEndDtm: string | null,
   pageActivity: { view: boolean, scroll: number, click: boolean },
   pageMoveType: { isNextPage: boolean, isExitPage: boolean, isLeavePage: boolean },
-  conversion?: {registerUser?: any, productView?: any, productBasket?: any, productPurchase?: any},
+  conversion?: Conversion,
   isLastLog?: boolean,
 }
+
+export type Conversion = {
+  registerUser?: any, productView?: any, productBasket?: any, productPurchase?: any
+}
+

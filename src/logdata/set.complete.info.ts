@@ -1,10 +1,10 @@
 import {injectable} from "inversify"
-import {logDataType} from "../types/log.data.type.ts"
+import {LogData} from "../types/log.data"
 
 @injectable()
 export class SetCompleteInfo {
-  async setInfo(rawList: logDataType[]): Promise<logDataType[]> {
-    const completeInfoList: logDataType[] = []
+  async setInfo(rawList: LogData[]): Promise<LogData[]> {
+    const completeInfoList: LogData[] = []
     rawList.forEach((item, index, list) => {
       const prevElement = list[index - 1]
       const nextElement = list[index + 1]

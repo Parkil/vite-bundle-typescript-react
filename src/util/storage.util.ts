@@ -1,7 +1,7 @@
-import {PageActivityType} from "../types/page.activity.type"
+import {PageActivity} from "../types/page.activity"
 import {RECOBLE_USER_DATA_KEY} from "../constants/constants.ts"
 
-export const emptyPageActivityObj = (): PageActivityType => {
+export const emptyPageActivityObj = (): PageActivity => {
   return {VIEW: false, SCROLL: 0.0, CLICK: false}
 }
 

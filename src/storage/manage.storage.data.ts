@@ -7,13 +7,13 @@ import {
   RECOBLE_CONVERSION_INFO_KEY, RECOBLE_HOSTNAME_KEY,
   RECOBLE_INCOMPLETE_LOG_INFO_KEY,
   RECOBLE_PAGE_ACTIVITY_KEY,
-  RECOBLE_PAGE_START_DTM_KEY,
+  RECOBLE_PAGE_START_DTM_KEY, RECOBLE_REVIEW_LIST_KEY,
   RECOBLE_UNLOAD_EVENT_EXECUTED_KEY,
   RECOBLE_URL_KEY
 } from "../constants/constants"
 import {BrowserInfoDto, PrevPageInfoDto} from "../dtos"
 import PAGE_ACTIVITY_TYPE from "../enums/page.activity.type"
-import {PageActivityType} from "../types/page.activity.type"
+import {PageActivity} from "../types/page.activity"
 import {decryptAES, emptyPageActivityObj, encryptAES, formatDate, genRecobleUserDataKey, printErrorMsg} from "../util"
 import {Storage} from "./storage"
 
@@ -81,7 +81,7 @@ export class ManageStorageData {
     this.#storage.setItem(RECOBLE_PAGE_ACTIVITY_KEY, JSON.stringify(storeData))
   }
 
-  findPageActivity(): PageActivityType {
+  findPageActivity(): PageActivity {
     const prevData = this.#storage.getItem(RECOBLE_PAGE_ACTIVITY_KEY)
     return (!prevData) ? emptyPageActivityObj() : JSON.parse(prevData)
   }
@@ -173,5 +173,17 @@ export class ManageStorageData {
 
   findCurrentHostName(): string | null {
     return this.#storage.getItem(RECOBLE_HOSTNAME_KEY)
+  }
+
+  setReviewListStr(reviewListStr: string): void {
+    this.#storage.setItem(RECOBLE_REVIEW_LIST_KEY, reviewListStr)
+  }
+
+  findReviewListStr(): string | null {
+    return this.#storage.getItem(RECOBLE_REVIEW_LIST_KEY)
+  }
+
+  clearReviewListStr(): void {
+    this.#storage.removeItem(RECOBLE_REVIEW_LIST_KEY)
   }
 }

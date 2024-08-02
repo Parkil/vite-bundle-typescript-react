@@ -3,7 +3,7 @@ import {IndexedDbWrapper} from "../indexeddb/indexed.db.wrapper.ts"
 import {INDEXED_DB_LAST_LOG, INDEXED_DB_LOG_DETAIL} from "../constants/constants.ts"
 import {findApiKeyHeader, printErrorMsg} from "../util"
 import {SetCompleteInfo} from "./set.complete.info.ts"
-import {logDataType} from "../types/log.data.type.ts"
+import {LogData} from "../types/log.data"
 import {SendHttpRequest} from "../sendhttprequest/send.http.request.ts"
 
 @injectable()
@@ -29,7 +29,7 @@ export class ManageLogData {
         2.2.5. 로그서버에 데이터 전송
         2.2.6. INDEXED_DB_LOG_DETAIL clear
      */
-  async addLog(logData: logDataType, capacity: number): Promise<void> {
+  async addLog(logData: LogData, capacity: number): Promise<void> {
     const database: IDBDatabase = await this.#connectDB()
     const addDataResult = await this.indexedDbWrapper.addData(database, INDEXED_DB_LOG_DETAIL, logData)
 

@@ -48,9 +48,8 @@ export class LoadEventDetail {
       }
 
       if (data.prevUrl !== data.nextUrl) {
-        this.sendHttpRequest.updateInCompleteLogInfo(findApiKeyHeader(), data).then(() => {
-          this.manageStorageData.clearIncompleteLogInfo()
-        })
+        this.sendHttpRequest.updateInCompleteLogInfo(findApiKeyHeader(), data).then(() => {})
+        this.manageStorageData.clearIncompleteLogInfo()
       }
     }
   }
