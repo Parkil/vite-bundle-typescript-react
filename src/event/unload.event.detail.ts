@@ -2,8 +2,6 @@ import {inject, injectable} from "inversify"
 import {PageActivity} from "../types/page.activity"
 import {ManageStorageData} from "../storage/manage.storage.data"
 import {ChkMeetsConversion} from "../conversion/chk.meets.conversion"
-import {calcScrollLoc} from "../util"
-// import {ScrappingReview} from "../scrapping/scrapping.review"
 import {Conversion, LogData} from "../types/log.data"
 import {ManageLogData} from "../logdata/manage.log.data.ts"
 
@@ -11,7 +9,6 @@ import {ManageLogData} from "../logdata/manage.log.data.ts"
 export class UnLoadEventDetail {
   @inject('ManageStorageData') private manageStorageData!: ManageStorageData
   @inject('ChkMeetsConversion') private chkMeetsConversion!: ChkMeetsConversion
-  // @inject('ScrappingReview') private scrappingReview!: ScrappingReview
   @inject('ManageLogData') private manageLogData!: ManageLogData
 
   onUnLoad(currentUrl: string) {
@@ -30,19 +27,18 @@ export class UnLoadEventDetail {
     const activityData: PageActivity = this.manageStorageData.findPageActivity()
     const userData: Record<string, any> = this.manageStorageData.findUserData(currentUrl)
 
-
     const loginAccount = userData.loginAccount
-    // const reviewSelector = userData.reviewSelector
     const searchWord = userData.searchWord
     const pageName = userData.pageName
 
     let reviewList = null
     const reviewListStr = this.manageStorageData.findReviewListStr()
-    console.log(currentUrl, 'unload review list str: ', reviewListStr)
 
     if (reviewListStr) {
       reviewList = reviewListStr.split('|')
     }
+
+    const scrollLoc = this.manageStorageData.findScrollLoc()
 
     const conversion = this.#assemblyConversion()
 
@@ -57,7 +53,7 @@ export class UnLoadEventDetail {
       pageEndDtm: null,
       pageActivity: {
         view: activityData.VIEW,
-        scroll: calcScrollLoc(),
+        scroll: scrollLoc,
         click: activityData.CLICK,
       },
       pageMoveType: {

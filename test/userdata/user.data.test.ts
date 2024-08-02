@@ -116,8 +116,6 @@ describe('userData', () => {
       },
     ])
 
-    console.log(JSON.stringify(manageStorageData.findUserData()))
-
     const userData = manageStorageData.findUserData()
     expect(userData.product.purchaseProduct[0].productCode).toEqual('Z1235455')
     expect(userData.product.purchaseProduct[0].productName).toEqual('상품')

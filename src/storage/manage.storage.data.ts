@@ -7,7 +7,7 @@ import {
   RECOBLE_CONVERSION_INFO_KEY, RECOBLE_HOSTNAME_KEY,
   RECOBLE_INCOMPLETE_LOG_INFO_KEY,
   RECOBLE_PAGE_ACTIVITY_KEY,
-  RECOBLE_PAGE_START_DTM_KEY, RECOBLE_REVIEW_LIST_KEY,
+  RECOBLE_PAGE_START_DTM_KEY, RECOBLE_REVIEW_LIST_KEY, RECOBLE_SCROLL_LOC_KEY,
   RECOBLE_UNLOAD_EVENT_EXECUTED_KEY,
   RECOBLE_URL_KEY
 } from "../constants/constants"
@@ -185,5 +185,17 @@ export class ManageStorageData {
 
   clearReviewListStr(): void {
     this.#storage.removeItem(RECOBLE_REVIEW_LIST_KEY)
+  }
+
+  setScrollLoc(scrollLoc: string): void {
+    this.#storage.setItem(RECOBLE_SCROLL_LOC_KEY, scrollLoc)
+  }
+
+  findScrollLoc(): string | null {
+    return this.#storage.getItem(RECOBLE_SCROLL_LOC_KEY)
+  }
+
+  clearScrollLoc(): void {
+    this.#storage.removeItem(RECOBLE_SCROLL_LOC_KEY)
   }
 }

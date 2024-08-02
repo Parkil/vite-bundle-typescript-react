@@ -11,7 +11,7 @@ export type LogData = {
   countryCode: string,
   pageStartDtm: string,
   pageEndDtm: string | null,
-  pageActivity: { view: boolean, scroll: number, click: boolean },
+  pageActivity: { view: boolean, scroll: string, click: boolean },
   pageMoveType: { isNextPage: boolean, isExitPage: boolean, isLeavePage: boolean },
   conversion?: Conversion,
   isLastLog?: boolean,

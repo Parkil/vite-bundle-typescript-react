@@ -5,12 +5,14 @@ import {ManageSaveUserData} from "./userdata/manage.save.user.data.ts"
 import {ManageStorageData} from "./storage/manage.storage.data.ts"
 import {UnLoadEventDetail} from "./event/unload.event.detail.ts"
 import {ScrappingReview} from "./scrapping/scrapping.review.ts"
+import {BrowserEvent} from "./event/browser.event.ts"
 
 const loadEventDetail = container.get<LoadEventDetail>('LoadEventDetail')
 const unLoadEventDetail = container.get<UnLoadEventDetail>('UnLoadEventDetail')
 const manageSaveUserData = container.get<ManageSaveUserData>('ManageSaveUserData')
 const manageStorageData = container.get<ManageStorageData>('ManageStorageData')
 const scrappingReview = container.get<ScrappingReview>('ScrappingReview')
+const browserEvent = container.get<BrowserEvent>('BrowserEvent')
 
 export const initRecoble = (apiKey: string) => {
   manageStorageData.setApiKey(apiKey)
@@ -23,10 +25,12 @@ export const useRecoblePageCycle = () => {
   manageStorageData.setCurrentHostName(currentHostName)
 
   useEffect(() => {
+    browserEvent.setBrowserEvent()
     findReviewList(currentUrl)
     loadEventDetail.onLoad()
     return () => {
       unLoadEventDetail.onUnLoad(currentUrl)
+      browserEvent.removeBrowserEvent()
     }
   }, [])
 }
@@ -38,16 +42,13 @@ export const useRecoblePageCycle = () => {
   시점 에서는 component mount 가 되었다는 것을 보장할수 없음 -> useState 를 쓰면 가능하겠지만, 원 시스템에 영향을 줄수 있기 때문에 제외
  */
 const findReviewList = (currentUrl: string) => {
-  console.log(currentUrl, 'findReviewList called')
   const userData = manageStorageData.findUserData(currentUrl)
 
   if (userData.reviewSelector) {
-    console.log(userData.reviewSelector)
     const reviewList = scrappingReview.findReviewContents(
       userData.reviewSelector.list_area_selector,
       userData.reviewSelector.row_contents_selector,
       document)
-    console.log(currentUrl, 'findReviewList result : ', reviewList)
     manageStorageData.setReviewListStr(reviewList.join('|'))
   }
 }
