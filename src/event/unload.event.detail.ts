@@ -4,6 +4,7 @@ import {ManageStorageData} from "../storage/manage.storage.data"
 import {ChkMeetsConversion} from "../conversion/chk.meets.conversion"
 import {Conversion, LogData} from "../types/log.data"
 import {ManageLogData} from "../logdata/manage.log.data.ts"
+import {UNLOAD_ENUM} from "../enums/unload.type.ts"
 
 @injectable()
 export class UnLoadEventDetail {
@@ -11,11 +12,11 @@ export class UnLoadEventDetail {
   @inject('ChkMeetsConversion') private chkMeetsConversion!: ChkMeetsConversion
   @inject('ManageLogData') private manageLogData!: ManageLogData
 
-  onUnLoad(currentUrl: string) {
+  onUnLoad(currentUrl: string, unloadType: UNLOAD_ENUM = UNLOAD_ENUM.PAGE_UNMOUNT) {
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
     const logData = this.#assemblyData(currentUrl)
-    this.manageLogData.addLog(logData, 5).then(() => {})
+    this.manageLogData.addLog(logData, unloadType).then(() => {})
     this.manageStorageData.clearUserData(currentUrl)
     this.manageStorageData.clearReviewListStr()
   }

@@ -6,6 +6,7 @@ import {mockFunction} from "../util/test.util"
 import {UnLoadEventDetail} from "../../src/event/unload.event.detail"
 import {ChkMeetsConversion} from "../../src/conversion/chk.meets.conversion"
 import {SendHttpRequest} from "../../src/sendhttprequest/send.http.request"
+import {UNLOAD_ENUM} from "../../src/enums/unload.type";
 
 describe('UnLoadEventDetail', () => {
   let unLoadEventDetail: UnLoadEventDetail
@@ -22,7 +23,7 @@ describe('UnLoadEventDetail', () => {
   })
 
   test('unload 실행', () => {
-    unLoadEventDetail.onUnLoad()
+    unLoadEventDetail.onUnLoad(window.location.href, UNLOAD_ENUM.PAGE_UNLOAD)
 
     expect(manageStorageData.findUnloadEventExecuted()).toEqual('true')
 

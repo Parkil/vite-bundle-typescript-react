@@ -14,8 +14,9 @@ import {
   sendLogParam_2_data,
   sendLogParam_2_userAgent
 } from "./manage.log.data.test.data"
-import SpiedClass = jest.SpiedClass
-import SpiedFunction = jest.SpiedFunction
+import {UNLOAD_ENUM} from "../../src/enums/unload.type"
+import SpiedClass = jest.SpiedClass;
+import SpiedFunction = jest.SpiedFunction;
 
 describe('manageLogData', () => {
   let manageLogData: ManageLogData
@@ -38,24 +39,24 @@ describe('manageLogData', () => {
   })
 
   test('capacity 에 저장된 로그 개수가 미치지 못하는 경우', async () => {
-    await manageLogData.addLog(addLogParam_1, 2)
+    await manageLogData.addLog(addLogParam_1, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
 
     expect(sendLogMock).toHaveBeenCalledTimes(0)
   })
 
   test('capacity 1회 달성', async () => {
-    await manageLogData.addLog(addLogParam_1, 2)
-    await manageLogData.addLog(addLogParam_2, 2)
+    await manageLogData.addLog(addLogParam_1, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
+    await manageLogData.addLog(addLogParam_2, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
 
     expect(sendLogMock).toHaveBeenCalledTimes(1)
     expect(sendLogMock).toBeCalledWith(sendLogParam_1_data, sendLogParam_1_userAgent, sendLogParam_1_apiHeader)
   })
 
   test('capacity 2회 달성', async () => {
-    await manageLogData.addLog(addLogParam_1, 2)
-    await manageLogData.addLog(addLogParam_2, 2)
-    await manageLogData.addLog(addLogParam_1, 2)
-    await manageLogData.addLog(addLogParam_2, 2)
+    await manageLogData.addLog(addLogParam_1, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
+    await manageLogData.addLog(addLogParam_2, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
+    await manageLogData.addLog(addLogParam_1, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
+    await manageLogData.addLog(addLogParam_2, UNLOAD_ENUM.PAGE_UNMOUNT_TEST)
 
     expect(sendLogMock).toHaveBeenCalledTimes(2)
     expect(sendLogMock).toBeCalledWith(sendLogParam_1_data, sendLogParam_1_userAgent, sendLogParam_1_apiHeader)

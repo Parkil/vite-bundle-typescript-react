@@ -5,6 +5,7 @@ import {findApiKeyHeader, printErrorMsg} from "../util"
 import {SetCompleteInfo} from "./set.complete.info.ts"
 import {LogData} from "../types/log.data"
 import {SendHttpRequest} from "../sendhttprequest/send.http.request.ts"
+import {UNLOAD_ENUM} from "../enums/unload.type.ts"
 
 @injectable()
 export class ManageLogData {
@@ -28,8 +29,9 @@ export class ManageLogData {
         2.2.4. 2-2-2 리스트의 마지막 값을 가져와서 INDEXED_DB_LAST_LOG 에 저장
         2.2.5. 로그서버에 데이터 전송
         2.2.6. INDEXED_DB_LOG_DETAIL clear
+        2.2.7. unloadType 이 PAGE_UNLOAD 일 경우 INDEXED_DB_LAST_LOG clear
      */
-  async addLog(logData: LogData, capacity: number): Promise<void> {
+  async addLog(logData: LogData, unloadType: UNLOAD_ENUM): Promise<void> {
     const database: IDBDatabase = await this.#connectDB()
     const addDataResult = await this.indexedDbWrapper.addData(database, INDEXED_DB_LOG_DETAIL, logData)
 
@@ -40,29 +42,27 @@ export class ManageLogData {
 
     const logDetailList = await this.indexedDbWrapper.findAll(database, INDEXED_DB_LOG_DETAIL)
 
-    if (logDetailList.length !== 0 && logDetailList.length >= capacity) {
+    if (logDetailList.length !== 0 && logDetailList.length >= unloadType.capacity) {
       const lastLogList = await this.indexedDbWrapper.findAll(database, INDEXED_DB_LAST_LOG)
       const concatList = [...lastLogList, ...logDetailList]
 
       const completeList = await this.setCompleteInfo.setInfo(concatList)
 
       await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LAST_LOG)
-      const lastElement = concatList[concatList.length - 1]
+      const lastElement = concatList[completeList.length - 1]
       lastElement.isLastLog = true
       await this.indexedDbWrapper.addData(database, INDEXED_DB_LAST_LOG, lastElement)
 
       const userAgentStr = completeList[0].userAgent
       const apiKeyHeader = findApiKeyHeader()
 
-      await this.sendHttpRequest.sendLog(completeList, userAgentStr, apiKeyHeader)
       await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LOG_DETAIL)
-    }
-  }
+      if (unloadType === UNLOAD_ENUM.PAGE_UNLOAD) {
+        await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LAST_LOG)
+      }
 
-  async clearAllLogData(): Promise<void> {
-    const database: IDBDatabase = await this.#connectDB()
-    await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LOG_DETAIL)
-    await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LAST_LOG)
+      await this.sendHttpRequest.sendLog(completeList, userAgentStr, apiKeyHeader)
+    }
   }
 
   async #connectDB(): Promise<IDBDatabase> {

@@ -8,7 +8,7 @@ export const addLogParam_1 = {
   "countryCode": "KR",
   "pageStartDtm": "2024-08-01T01:33:00",
   "pageEndDtm": null,
-  "pageActivity": {"view": true, "scroll": 0, "click": false},
+  "pageActivity": {"view": true, "scroll": '0', "click": false},
   "pageMoveType": {"isNextPage": false, "isExitPage": false, "isLeavePage": false}
 }
 
@@ -22,7 +22,7 @@ export const addLogParam_2 = {
   "countryCode": "KR",
   "pageStartDtm": "2024-08-01T01:33:03",
   "pageEndDtm": null,
-  "pageActivity": {"view": true, "scroll": 0, "click": false},
+  "pageActivity": {"view": true, "scroll": '0', "click": false},
   "pageMoveType": {"isNextPage": false, "isExitPage": false, "isLeavePage": false}
 }
 
@@ -32,7 +32,7 @@ export const sendLogParam_1_data = [{
   "id": 1,
   "ip": "121.125.238.186",
   "isLastLog": false,
-  "pageActivity": {"click": false, "scroll": 0, "view": true},
+  "pageActivity": {"click": false, "scroll": '0', "view": true},
   "pageEndDtm": "2024-08-01T01:33:03",
   "pageMoveType": {"isExitPage": false, "isLeavePage": false, "isNextPage": true},
   "pageName": "메인페이지",
@@ -46,7 +46,7 @@ export const sendLogParam_1_data = [{
   "id": 2,
   "ip": "121.125.238.186",
   "isLastLog": true,
-  "pageActivity": {"click": false, "scroll": 0, "view": true},
+  "pageActivity": {"click": false, "scroll": '0', "view": true},
   "pageEndDtm": null,
   "pageMoveType": {"isExitPage": false, "isLeavePage": false, "isNextPage": false},
   "pageName": "다음페이지",
@@ -64,7 +64,7 @@ export const sendLogParam_2_data = [{
   "id": 2,
   "ip": "121.125.238.186",
   "isLastLog": true,
-  "pageActivity": {"click": false, "scroll": 0, "view": true},
+  "pageActivity": {"click": false, "scroll": '0', "view": true},
   "pageEndDtm": "2024-08-01T01:33:00",
   "pageMoveType": {"isExitPage": false, "isLeavePage": false, "isNextPage": true},
   "pageName": "다음페이지",
@@ -78,7 +78,7 @@ export const sendLogParam_2_data = [{
   "id": 3,
   "ip": "121.125.238.186",
   "isLastLog": false,
-  "pageActivity": {"click": false, "scroll": 0, "view": true},
+  "pageActivity": {"click": false, "scroll": '0', "view": true},
   "pageEndDtm": "2024-08-01T01:33:03",
   "pageMoveType": {"isExitPage": false, "isLeavePage": false, "isNextPage": true},
   "pageName": "메인페이지",
@@ -92,7 +92,7 @@ export const sendLogParam_2_data = [{
   "id": 4,
   "ip": "121.125.238.186",
   "isLastLog": true,
-  "pageActivity": {"click": false, "scroll": 0, "view": true},
+  "pageActivity": {"click": false, "scroll": '0', "view": true},
   "pageEndDtm": null,
   "pageMoveType": {"isExitPage": false, "isLeavePage": false, "isNextPage": false},
   "pageName": "다음페이지",
