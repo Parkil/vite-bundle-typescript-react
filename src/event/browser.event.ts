@@ -2,11 +2,13 @@ import {calcScrollLoc, chkBrowserIsValid, printErrorMsg} from "../util"
 import {inject, injectable} from "inversify"
 import {UnLoadEventDetail} from "./unload.event.detail.ts"
 import {ManageStorageData} from "../storage/manage.storage.data.ts"
+import {ManageLogData} from "../logdata/manage.log.data.ts";
 
 @injectable()
 export class BrowserEvent {
   @inject('UnLoadEventDetail') private unLoadEventDetail!: UnLoadEventDetail
   @inject('ManageStorageData') private manageStorageData!: ManageStorageData
+  @inject('ManageLogData') private manageLogData!: ManageLogData
 
   setBrowserEvent(): void {
     this.#setDocumentEvent('visibilitychange', this.#visibilityChangeUnLoad)
@@ -24,6 +26,7 @@ export class BrowserEvent {
 
   #execUnload = () => {
     this.unLoadEventDetail.onUnLoad(window.location.href)
+    this.manageLogData.clearAllLogData().then(() => {})
   }
 
   #visibilityChangeUnLoad = () => {
@@ -33,6 +36,7 @@ export class BrowserEvent {
       // this.manageStorageData.findUnloadEventExecuted() === 'true'
       // 위 로직 때문에 visibilityState 가 visible <-> hidden 을 여러번 반복해도 로그는 단 한번만 전송된다
       this.unLoadEventDetail.onUnLoad(window.location.href)
+      this.manageLogData.clearAllLogData().then(() => {})
     }
   }
 

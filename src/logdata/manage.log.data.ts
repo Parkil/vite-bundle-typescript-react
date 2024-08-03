@@ -59,6 +59,12 @@ export class ManageLogData {
     }
   }
 
+  async clearAllLogData(): Promise<void> {
+    const database: IDBDatabase = await this.#connectDB()
+    await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LOG_DETAIL)
+    await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LAST_LOG)
+  }
+
   async #connectDB(): Promise<IDBDatabase> {
     const options = [
       {
