@@ -48,7 +48,8 @@ export class UnLoadEventDetail {
       reviewList = reviewListStr.split('|')
     }
 
-    const scrollLoc = this.manageStorageData.findScrollLoc()
+    const scrollLoc = this.manageStorageData.findScrollLoc() ?? '0'
+
 
     const conversion = this.#assemblyConversion()
 
