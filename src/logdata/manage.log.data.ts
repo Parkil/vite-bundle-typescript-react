@@ -50,7 +50,7 @@ export class ManageLogData {
 
       await this.indexedDbWrapper.clearAll(database, INDEXED_DB_LAST_LOG)
       const lastElement = concatList[completeList.length - 1]
-      lastElement.isLastLog = true
+      lastElement.lastLogFlag = true
       await this.indexedDbWrapper.addData(database, INDEXED_DB_LAST_LOG, lastElement)
 
       const userAgentStr = completeList[0].userAgent

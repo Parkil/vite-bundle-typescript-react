@@ -14,7 +14,7 @@ export type LogData = {
   pageActivity: { view: boolean, scroll: string, click: boolean },
   pageMoveType: { isNextPage: boolean, isExitPage: boolean, isLeavePage: boolean },
   conversion?: Conversion,
-  isLastLog?: boolean,
+  lastLogFlag?: boolean,
 }
 
 export type Conversion = {

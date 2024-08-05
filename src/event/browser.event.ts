@@ -39,7 +39,7 @@ export class BrowserEvent {
 
   #scrollChange = () => {
     const pos = calcScrollLoc()
-    this.manageStorageData.setScrollLoc(pos)
+    this.manageStorageData.setScrollLoc(pos ?? '0')
   }
 
   /*

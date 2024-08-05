@@ -13,12 +13,21 @@ export class UnLoadEventDetail {
   @inject('ManageLogData') private manageLogData!: ManageLogData
 
   onUnLoad(currentUrl: string, unloadType: UNLOAD_ENUM = UNLOAD_ENUM.PAGE_UNMOUNT) {
+
+    if (unloadType === UNLOAD_ENUM.PAGE_UNLOAD && this.manageStorageData.findUnloadEventExecuted() === 'true') {
+      return
+    }
+
     // todo 전환정보 충족여부 확인 (현재는 임시 구현이며 나중에 변경될 수 있다)
     this.chkMeetsConversion.check()
     const logData = this.#assemblyData(currentUrl)
     this.manageLogData.addLog(logData, unloadType).then(() => {})
     this.manageStorageData.clearUserData(currentUrl)
     this.manageStorageData.clearReviewListStr()
+
+    if (unloadType === UNLOAD_ENUM.PAGE_UNLOAD) {
+      this.manageStorageData.setUnloadEventExecuted()
+    }
   }
 
   #assemblyData(currentUrl: string): LogData {

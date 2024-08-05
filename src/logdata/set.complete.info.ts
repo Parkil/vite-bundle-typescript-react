@@ -8,7 +8,7 @@ export class SetCompleteInfo {
     rawList.forEach((item, index, list) => {
       const prevElement = list[index - 1]
       const nextElement = list[index + 1]
-      item.isLastLog = (typeof item.isLastLog === 'undefined' ? false : item.isLastLog)
+      item.lastLogFlag = (typeof item.lastLogFlag === 'undefined' ? false : item.lastLogFlag)
 
       if (typeof prevElement !== 'undefined') {
         item['referrer'] = prevElement['pageUrl']
