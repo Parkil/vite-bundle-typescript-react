@@ -5,6 +5,7 @@ import {ChkMeetsConversion} from "../conversion/chk.meets.conversion"
 import {Conversion, LogData} from "../types/log.data"
 import {ManageLogData} from "../logdata/manage.log.data.ts"
 import {UNLOAD_ENUM} from "../enums/unload.type.ts"
+import {formatDate} from "../util";
 
 @injectable()
 export class UnLoadEventDetail {
@@ -72,6 +73,7 @@ export class UnLoadEventDetail {
         isExitPage: false,
         isLeavePage: false,
       },
+      regDtm: formatDate(new Date()),
       ...(conversion && {conversion}),
     }
   }
