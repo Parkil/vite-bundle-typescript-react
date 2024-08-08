@@ -1,9 +1,9 @@
 import {useEffect} from "react"
 import {
-  findReviewContents, runLoadEvent, runUnloadEvent,
+  findReviewContents, runSpaLoadEvent, runSpaUnloadEvent,
   saveApiKey,
   saveHostName,
-  saveUrl, saveUserData
+  saveUrl, saveUserData, insertSpaPageCloseEventScript
 } from "recoble-common-module"
 
 export const initRecoble = (apiKey: string) => {
@@ -18,10 +18,11 @@ export const useRecoblePageCycle = () => {
   saveHostName(currentHostName)
 
   useEffect(() => {
+    insertSpaPageCloseEventScript()
     findReviewContents(currentUrl)
-    runLoadEvent()
+    runSpaLoadEvent()
     return () => {
-      runUnloadEvent(currentUrl)
+      runSpaUnloadEvent(currentUrl)
     }
   }, [])
 }
