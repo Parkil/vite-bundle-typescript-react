@@ -17,7 +17,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build:local:mac": "vite build --mode mypc && cp /Users/ilpark/WebstormProjects/vite-bundle-typescript-common/dist/*.* /Users/ilpark/npm_local_package/recoble-test-typescript/dist",
+    "build:local:mac": "vite build --mode mypc && cp /Users/ilpark/WebstormProjects/vite-bundle-typescript-react/dist/*.* /Users/ilpark/npm_local_package/recoble-test-typescript/dist",
     "build:local:win": "vite build --mode mypc && copy /y c:\\Dev\\js_workspace\\vite-bundle-typescript-react\\dist\\*.* c:\\npm-local-package\\recoble-test-typescript\\dist",
     "build:dev": "vite build --mode dev",
     "build:prod": "vite build --mode prod",
