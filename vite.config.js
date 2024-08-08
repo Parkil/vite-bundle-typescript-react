@@ -8,7 +8,7 @@ export default defineConfig({
       entry: [
         "src/main.ts",
       ],
-      name: "Demo",
+      name: "Recoble React Module",
       fileName: (format, name) => {
         if (format === "es") {
           return `${name}.js`;

@@ -1,7 +1,0 @@
-enum PAGE_ACTIVITY_TYPE {
-  VIEW = 'VIEW',
-  SCROLL = 'SCROLL',
-  CLICK = 'CLICK',
-}
-
-export default PAGE_ACTIVITY_TYPE
