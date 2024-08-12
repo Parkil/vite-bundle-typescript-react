@@ -1,6 +1,6 @@
 import {useEffect} from "react"
 import {
-  findReviewContents, runSpaLoadEvent, runSpaUnloadEvent,
+  findReviewContents, runSpaLoadEvent, runSpaUnMountEvent,
   saveApiKey,
   saveHostName,
   saveUrl, saveUserData, insertSpaPageCloseEventScript
@@ -22,7 +22,7 @@ export const useRecoblePageCycle = () => {
     findReviewContents(currentUrl)
     runSpaLoadEvent()
     return () => {
-      runSpaUnloadEvent(currentUrl)
+      runSpaUnMountEvent(currentUrl)
     }
   }, [])
 }
