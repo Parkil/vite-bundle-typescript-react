@@ -5,7 +5,6 @@ export const unloadScript = () => {
   
     window.addEventListener("beforeunload", () => {
       if (!executed) {  
-        console.log('beforeunload run')  
         window.setRecoblePageUnloadEvent()
         executed = true  
       }  
@@ -13,7 +12,6 @@ export const unloadScript = () => {
     
     window.addEventListener("pagehide", () => {
       if (!executed) {  
-        console.log('pagehide run')
         window.setRecoblePageUnloadEvent()  
         executed = true  
       }  
@@ -24,7 +22,6 @@ export const unloadScript = () => {
     
       if (visibilityState === 'hidden') {  
         if (!executed) {  
-          console.log('visibilitychange run')
           window.setRecoblePageUnloadEvent()  
           executed = true  
         }  
