@@ -7,7 +7,8 @@
     "skipLibCheck": true,
     "experimentalDecorators": true, // inversify 에서 필요
     "emitDecoratorMetadata": true, // inversify 에서 필요
-    "types": ["@abraham/reflection", "@types/react"], // reflect-metadata 는 inversify 에서 필요
+    // @abraham/reflection (inversify 에서 필요), vite/client (import.meta.env type 정의)
+    "types": ["@abraham/reflection", "@types/react", "vite/client"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -24,6 +25,7 @@
     "noFallthroughCasesInSwitch": true,
 
     "declaration": true,
+    "esModuleInterop": true,
   },
   "include": ["src"]
 }

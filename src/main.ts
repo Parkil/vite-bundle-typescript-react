@@ -1,40 +1,43 @@
-import {useEffect} from "react";
-import container from "./config/inversify_config"
-import {LoadEventDetail} from "./event/load.event.detail.ts";
-import {ManageSaveUserData} from "./userdata/manage.save.user.data.ts";
-import {ManageStorageData} from "./storage/manage.storage.data.ts";
-import {UnLoadEventDetail} from "./event/unload.event.detail.ts";
+import {useEffect} from "react"
+import {
+  findReviewContents, runSpaLoadEvent, runSpaUnMountEvent,
+  saveApiKey,
+  saveHostName,
+  saveUrl, saveUserData, insertSpaPageCloseEventScript, runSpaUnloadEvent
+} from "recoble-common-module"
+import {unloadScript} from "./unload.script.ts"
 
-const loadEventDetail = container.get<LoadEventDetail>('LoadEventDetail')
-const unLoadEventDetail = container.get<UnLoadEventDetail>('UnLoadEventDetail')
-const manageSaveUserData = container.get<ManageSaveUserData>('ManageSaveUserData')
-const manageStorageData = container.get<ManageStorageData>('ManageStorageData')
+declare global {
+  interface Window {
+    setRecoblePageUnloadEvent: () => void
+  }
+}
 
+window.setRecoblePageUnloadEvent = () => {
+  runSpaUnloadEvent(window.location.href)
+}
 
 export const initRecoble = (apiKey: string) => {
-  console.log('1.apikey : ', apiKey)
-  manageStorageData.setApiKey(apiKey)
+  saveApiKey(apiKey)
 }
 
 export const useRecoblePageCycle = () => {
-  console.log('2.beforeUseEffect')
+  const currentUrl = window.location.href
+  const currentHostName = window.location.hostname
+
+  saveUrl(currentUrl)
+  saveHostName(currentHostName)
+
   useEffect(() => {
-    console.log('2.useEffect')
-    const currentUrl = window.location.href
-    console.log('2.useEffect-1')
-    loadEventDetail.onLoad(currentUrl).then(() => {})
-    console.log('2.useEffect-2')
+    insertSpaPageCloseEventScript(unloadScript(), 'recoble script')
+    findReviewContents(currentUrl)
+    runSpaLoadEvent()
     return () => {
-      console.log('2.useEffect-unmount-1')
-      unLoadEventDetail.onUnLoad(currentUrl).then(() => {})
-      console.log('2.useEffect-unmount-2')
+      runSpaUnMountEvent(currentUrl)
     }
-  },[])
+  }, [])
 }
 
 export const saveRecobleUserData = (paramArr: { [key: string]: any }[]) => {
-  console.log('3.saveUserData')
-  manageSaveUserData.save(paramArr)
-  console.log('3.saveUserData - 1')
+  saveUserData(paramArr)
 }
-
